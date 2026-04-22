@@ -1,0 +1,34 @@
+{
+  "name": "storykids",
+  "version": "0.0.0",
+  "private": true,
+  "description": "StoryKids AI — personalized illustrated storybooks featuring the child's own face.",
+  "packageManager": "pnpm@10.0.0",
+  "engines": {
+    "node": ">=24.15.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "build": "pnpm -r --filter='./packages/*' --filter='./apps/api' run build",
+    "typecheck": "pnpm -r --parallel run typecheck",
+    "lint": "pnpm -r --parallel run lint",
+    "test": "pnpm -r --parallel run test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,md,yaml,yml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,md,yaml,yml}\"",
+    "clean": "pnpm -r --parallel exec rm -rf dist node_modules .turbo && rm -rf node_modules",
+    "experiment:face-consistency": "pnpm --filter face-consistency-test run start",
+    "api:dev": "pnpm --filter @storykids/api run dev",
+    "api:worker": "pnpm --filter @storykids/api run worker",
+    "db:migrate": "pnpm --filter @storykids/api run db:migrate",
+    "db:generate": "pnpm --filter @storykids/api run db:generate",
+    "docker:up": "docker compose -f infra/docker/docker-compose.dev.yml up -d",
+    "docker:down": "docker compose -f infra/docker/docker-compose.dev.yml down"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "eslint": "^9.18.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.8.0",
+    "typescript-eslint": "^8.20.0"
+  }
+}

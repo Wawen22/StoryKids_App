@@ -1,0 +1,159 @@
+// StoryKids data model — single source of truth for the Postgres schema.
+// Run `pnpm db:generate` after changes. Migrations live under prisma/migrations/.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================================
+//   User (mirrors Supabase auth.users via shared id)
+// ============================================================
+model User {
+  id           String        @id
+  email        String        @unique
+  locale       String        @default("en")
+  createdAt    DateTime      @default(now())
+  deletedAt    DateTime?
+  children     Child[]
+  stories      Story[]
+  subscription Subscription?
+  aiCallLogs   AiCallLog[]
+
+  @@map("users")
+}
+
+// ============================================================
+//   Child
+// ============================================================
+model Child {
+  id        String       @id @default(uuid())
+  userId    String
+  name      String
+  ageYears  Int
+  createdAt DateTime     @default(now())
+  deletedAt DateTime?
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photos    ChildPhoto[]
+  stories   Story[]
+
+  @@index([userId])
+  @@map("children")
+}
+
+// ============================================================
+//   ChildPhoto — 48h TTL managed by sweeper job
+// ============================================================
+model ChildPhoto {
+  id         String    @id @default(uuid())
+  childId    String
+  r2Key      String    @unique
+  uploadedAt DateTime  @default(now())
+  expiresAt  DateTime
+  deletedAt  DateTime?
+  child      Child     @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@map("child_photos")
+}
+
+// ============================================================
+//   Story
+// ============================================================
+enum StoryStatus {
+  PENDING
+  GENERATING
+  READY
+  FAILED
+}
+
+model Story {
+  id             String      @id @default(uuid())
+  userId         String
+  childId        String
+  status         StoryStatus @default(PENDING)
+  theme          String
+  artStyle       String
+  language       String      @default("en")
+  jobId          String?     @unique
+  titleText      String?
+  totalPages     Int         @default(10)
+  freePagesCount Int         @default(3)
+  providerImage  String?
+  providerText   String?
+  costCents      Int         @default(0)
+  errorMessage   String?
+  createdAt      DateTime    @default(now())
+  completedAt    DateTime?
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  child          Child       @relation(fields: [childId], references: [id], onDelete: Restrict)
+  pages          StoryPage[]
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("stories")
+}
+
+// ============================================================
+//   StoryPage
+// ============================================================
+model StoryPage {
+  id          String   @id @default(uuid())
+  storyId     String
+  index       Int
+  text        String
+  imageKey    String?
+  imagePrompt String
+  provider    String
+  costCents   Int      @default(0)
+  createdAt   DateTime @default(now())
+  story       Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, index])
+  @@map("story_pages")
+}
+
+// ============================================================
+//   Subscription (synced from RevenueCat webhooks)
+// ============================================================
+model Subscription {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  rcEntitlement String?
+  rcProductId   String?
+  isActive      Boolean   @default(false)
+  periodType    String?
+  currentEnd    DateTime?
+  lastWebhookAt DateTime?
+  raw           Json?
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+// ============================================================
+//   AiCallLog — cost cap + audit
+// ============================================================
+model AiCallLog {
+  id           String   @id @default(uuid())
+  userId       String
+  storyId      String?
+  kind         String
+  provider     String
+  model        String
+  inputTokens  Int?
+  outputTokens Int?
+  costCents    Int
+  latencyMs    Int
+  success      Boolean
+  errorCode    String?
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("ai_call_logs")
+}

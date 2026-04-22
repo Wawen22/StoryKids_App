@@ -1,0 +1,58 @@
+# Secrets — NEVER commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+service-account*.json
+credentials*.json
+
+# Node
+node_modules/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+.turbo/
+
+# pnpm
+.pnpm-store/
+
+# Experiment output (generated images, reports)
+experiments/*/output/
+!experiments/*/output/.gitkeep
+
+# Flutter / Dart
+apps/mobile/.dart_tool/
+apps/mobile/.packages
+apps/mobile/build/
+apps/mobile/.flutter-plugins
+apps/mobile/.flutter-plugins-dependencies
+apps/mobile/.idea/
+apps/mobile/ios/Pods/
+apps/mobile/ios/.symlinks/
+apps/mobile/android/.gradle/
+apps/mobile/android/local.properties
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Prisma generated client
+apps/api/node_modules/.prisma/
+apps/api/prisma/migrations/migration_lock.toml.local
+
+# Logs
+*.log
+logs/
+
+# Supabase local
+infra/supabase/.branches/
+infra/supabase/.temp/

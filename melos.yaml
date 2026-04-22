@@ -1,0 +1,17 @@
+name: storykids
+packages:
+  - apps/mobile
+
+command:
+  bootstrap:
+    environment:
+      sdk: ">=3.6.0 <4.0.0"
+      flutter: ">=3.27.0"
+
+scripts:
+  analyze:
+    run: melos exec --concurrency=1 -- "flutter analyze"
+  test:
+    run: melos exec --concurrency=1 -- "flutter test"
+  format:
+    run: melos exec --concurrency=1 -- "dart format --set-exit-if-changed ."

@@ -1,0 +1,23 @@
+{
+  "name": "face-consistency-test",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Sprint 0 gate — compares Azure gpt-image-2 vs Gemini 2.0 Flash Image for face consistency across 5 scenes.",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@storykids/ai-providers": "workspace:*",
+    "@storykids/prompt-library": "workspace:*",
+    "@storykids/shared-types": "workspace:*",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0"
+  }
+}

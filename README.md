@@ -1,4 +1,4 @@
-# StoryKids AI APP
+# StoryKids AI APP (Android + iOS)
 
 Personalized illustrated storybooks where the child's own face becomes the protagonist. Flutter mobile app + Node/Fastify backend + Supabase + Cloudflare R2.
 

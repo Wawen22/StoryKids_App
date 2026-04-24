@@ -10,45 +10,32 @@ If you are the next Claude Code session: read [`AGENTS.md`](AGENTS.md), [`docs/A
 
 | # | Blocker | Owner | Unblocks |
 |---|---|---|---|
-| B1 | **Rotate 2 leaked API keys** (OpenRouter + Azure Foundry) that were pasted in chat in the previous session | User | `.env` creation → everything else |
-| B2 | Provide **Azure endpoint URL** + **deployment name** for `gpt-image-2` | User | Sprint 0 script + API image provider |
-| B3 | Drop **mockup screenshots** into [`docs/mockups/`](docs/mockups/) | User | Flutter UI work |
-| B4 | Put **1–2 reference photos** in [`experiments/face-consistency-test/input/`](experiments/face-consistency-test/input/) as `reference-1.jpg` (and optionally `reference-2.jpg`) | User | Sprint 0 experiment run |
-| B5 | Create external accounts **when ready for prod**: Supabase (EU region), Cloudflare R2 bucket, Upstash Redis, RevenueCat, Railway, Sentry, PostHog (EU cloud) | User | Deploying Sprint 1 end-to-end |
+| B1 | Provide **Azure endpoint URL** + **deployment name** for `gpt-image-2` | User | Sprint 0 script + API image provider |
+| B2 | Drop **mockup screenshots** into [`docs/mockups/`](docs/mockups/) | User | Flutter UI work |
+| B3 | Put **1–2 reference photos** in [`experiments/face-consistency-test/input/`](experiments/face-consistency-test/input/) as `reference-1.jpg` (and optionally `reference-2.jpg`) | User | Sprint 0 experiment run |
+| B4 | Create external accounts **when ready for prod**: Supabase (EU region), Cloudflare R2 bucket, Upstash Redis, RevenueCat, Railway, Sentry, PostHog (EU cloud) | User | Deploying Sprint 1 end-to-end |
 
-### B1 — How to rotate the leaked keys
+### B1 — What you need to capture from Azure
 
-**OpenRouter** — `sk-or-v1-6bc148…` (leaked in previous chat)
-1. Go to <https://openrouter.ai/settings/keys>
-2. Click **Revoke** next to the leaked key.
-3. Click **Create Key**, name it `storykids-dev` (restrict scope if the UI allows).
-4. Copy the new key → you will paste it into `.env` in step §2.
-
-**Azure Foundry / OpenAI** — `4dAlUiNo…mnyT` (leaked in previous chat)
-1. Open the Azure Portal → your OpenAI resource (e.g. `rsrc-gpt-5-codex`).
-2. *Resource Management → Keys and Endpoint* → click **Regenerate Key 1**.
-3. Copy the new key + the **Endpoint** URL shown on that page.
-4. *Resource Management → Model deployments* → note the **Deployment name** used for `gpt-image-2`.
-
-### B2 — What you need to capture from Azure
+From the Azure Portal → your OpenAI resource → *Resource Management → Keys and Endpoint* and *Model deployments*:
 
 - `AZURE_OPENAI_ENDPOINT` — the resource URL, e.g. `https://rsrc-xxx.openai.azure.com/openai/v1`
-- `AZURE_OPENAI_API_KEY` — the newly-regenerated key from B1
+- `AZURE_OPENAI_API_KEY` — Key 1 or Key 2
 - `AZURE_OPENAI_IMAGE_DEPLOYMENT` — your deployment name (probably `gpt-image-2`, but verify)
 
-### B3 — Mockups
+### B2 — Mockups
 
 Drop the PNGs (or PDFs) you mentioned in `docs/mockups/`. Name them by screen, e.g. `01-welcome.png`, `02-child-details.png`, `03-photo-upload.png`, `04-theme-picker.png`, `05-art-style.png`, `06-generating.png`, `07-preview-paywall.png`.
 
-### B4 — Reference photos for Sprint 0
+### B3 — Reference photos for Sprint 0
 
 - Use a real child photo (with guardian consent) **or** a stock photo (e.g. <https://www.pexels.com/search/child%20portrait/>) for testing.
 - Name the file `reference-1.jpg` exactly. Optionally add `reference-2.jpg` for a second angle — some providers handle multi-reference better.
 - Image should be a clear, front-facing portrait, at least 512 × 512 px, under 4 MB.
 
-### B5 — External accounts (deferrable)
+### B4 — External accounts (deferrable)
 
-Only blocks prod. Sprint 0 and local dev do **not** need these — you can go pretty far with just B1–B4.
+Only blocks prod. Sprint 0 and local dev do **not** need these — you can go pretty far with just B1–B3.
 
 ---
 
@@ -64,7 +51,7 @@ corepack enable && corepack prepare pnpm@latest --activate
 # 2. Install (first run ~3–5 min, ~800 MB)
 pnpm install
 
-# 3. Secrets — fill in with rotated keys + Azure endpoint
+# 3. Secrets — fill in API keys + Azure endpoint
 cp .env.example .env
 cp experiments/face-consistency-test/.env.example experiments/face-consistency-test/.env
 cp apps/api/.env.example apps/api/.env
@@ -119,7 +106,7 @@ Hand this section verbatim to the next Claude Code session as the first task lis
 7. **Subscription state machine tests** — grace period, cancellation, refund, upgrade.
 8. **Sentry wiring** in [`apps/api/src/server.ts`](apps/api/src/server.ts) + worker entrypoint. Keep error payloads free of child data (see [`docs/PRIVACY.md`](docs/PRIVACY.md)).
 
-### Phase C — Flutter (only after B3 mockups arrive)
+### Phase C — Flutter (only after B2 mockups arrive)
 
 9. Bootstrap per [`apps/mobile/README.md`](apps/mobile/README.md): `flutter create . --project-name storykids --org ai.storykids --empty`, add the locked dep list, register the project in [`melos.yaml`](melos.yaml).
 10. Implement theme tokens (cream `#FBF5EA`, aubergine `#2D1B3D`, terracotta `#C9663F`, amber `#F3D5A7`) + Fraunces + Manrope via `google_fonts`.

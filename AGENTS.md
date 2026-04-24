@@ -3,6 +3,17 @@
 This file governs how Claude Code, Codex, and any other AI agent must work in this repo.
 Read it fully **before writing any code**. Treat it as a contract.
 
+### Mandatory reading before any session
+
+| Document | When to read |
+|---|---|
+| This file (`AGENTS.md`) | Always — first |
+| [`CLAUDE.md`](CLAUDE.md) | Always — Claude Code session context and active blockers |
+| [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) | Before **any** Flutter/UI work — colors, fonts, spacing, components |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Before backend or infra work |
+| [`docs/superpowers/specs/2026-04-22-storykids-mvp-design.md`](docs/superpowers/specs/2026-04-22-storykids-mvp-design.md) | For data model, API surface, sprint scope |
+| [`docs/PRIVACY.md`](docs/PRIVACY.md) | Before any code that touches user or child data |
+
 ---
 
 ## 1. Golden rules (never violated)
@@ -14,7 +25,7 @@ Read it fully **before writing any code**. Treat it as a contract.
 5. **No destructive git/db commands** without explicit user approval. `git reset --hard`, `git push --force`, `DROP TABLE`, `prisma migrate reset` — stop and ask.
 6. **Ask before installing deps outside the locked stack** in `docs/ARCHITECTURE.md`.
 7. **Never invent API shapes.** When unsure about a library or model, use Context7 or the Microsoft Learn MCP to fetch current docs.
-8. **Match mockups pixel-precisely.** Flag discrepancies vs. the product doc — never invent requirements.
+8. **Match mockups pixel-precisely.** Flag discrepancies vs. the product doc or `docs/DESIGN_SYSTEM.md` — never invent requirements.
 
 ---
 
@@ -87,7 +98,7 @@ Run locally: `pnpm test`. Mobile: `melos run test`.
 
 ## 7. Workflow for AI agents
 
-1. **Read** `AGENTS.md` + `docs/ARCHITECTURE.md` + any relevant design spec in `docs/superpowers/specs/`.
+1. **Read** `AGENTS.md` + `CLAUDE.md` + `docs/ARCHITECTURE.md` + `docs/DESIGN_SYSTEM.md` + any relevant design spec in `docs/superpowers/specs/`.
 2. Use the **superpowers** flow: `brainstorming` → `writing-plans` → `executing-plans`. No shortcuts.
 3. Before any non-trivial change, check for an existing design spec. If absent, write one.
 4. For library/API questions use **Context7** or **Microsoft Learn MCP** before coding. Never guess an SDK shape.
